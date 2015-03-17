@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import Ticket, Label
+from .models import Ticket, Label, User, Comment
 import hashlib
 
 # Create your views here.
@@ -33,6 +33,19 @@ def newissues(request):
     else:
         name = "default"
     return render(request, 'newissues.html', {"issue_get": name, "request": request})
+
+def add(request):
+    if request.method == 'POST':
+        if request.session['login']:
+            if request.POST['todo'] == "newissue":
+                title = request.POST['title']
+                content = request.POST['comment']
+                ticket = Ticket(ticket_title=title)
+                ticket.save()
+                user = get_object_or_404(User, id=1)
+                comment = Comment(ticket=ticket, content=content, user=user)
+                comment.save()
+    return redirect('home')
 
 def loginhere(request):
 
