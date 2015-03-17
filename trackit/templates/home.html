@@ -1,38 +1,45 @@
 {% extends "base.html" %}
 {% block hey %}
-    <div class="row">
-        <div class="col-md-8">
-            <h2>IssueName <span style="color:#aaa">#id</span></h2>
-        </div>
-    </div>
-    <div style="float: left;">
-        <h4><span class="label label-success"><span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span> Open</span></h4>
-    </div>
-    <div><h4></h4>&nbsp;&nbsp;<a href="">noracami</a> opened this issue 3 days ago · 0 comments</div>
-    <div class="row"></div>
-    <hr>
-    <div style="float: left;">
-        <img src="http://placehold.it/48x48" alt="">
-    </div>
-    <div style="float: left; width: 600px; margin-left:40px;">
-        <div class="row">
-            <div class="col-xs-12">
-                <div class="row">
-                    noracami commented 3 days ago
-                </div>
-                <div class="row">
-                    content . . .
+    <div class="row-issue-list">
+        <div class="media">
+            <div class="media-left media-top">
+                <a href="#">
+                    <img class="media-object" src="http://placehold.it/36x36" alt="...">
+                </a>
+            </div>
+            <div class="media-body">
+                <span class="h3 issue-title-link">Issue Name</span>
+                <span class="labels">123</span>
+                <div class="issue-meta">
+                    #25 opened <time datetime="2015-03-17T10:37:18Z" is="relative-time" title="2014年3月31日 下午6:37 GMT+8">on 31 Mar 2014</time> by ipaaa 
                 </div>
             </div>
         </div>
     </div>
-    <div style="float: left;">
-        <img src="http://placehold.it/48x48" alt="">
-    </div>
-    <div class="row"></div>
     <hr>
-    <div>Title: <i>issue name</i></div>
-    <div>{{ issue }}</div>
-    <div>{{ label }}</div>
-    <div>{{ readit }}</div>
+    {% for r in readit %}
+    <h3>{{ r.status }}</h3>
+    <div class="row-issue-list">
+        <div class="media">
+            <div class="media-left media-top">
+                <a href="#">
+                    <img class="media-object" src="http://placehold.it/36x36" alt="...">
+                </a>
+            </div>
+            <div class="media-body">
+                <a href="/issues/{{ r.id }}" class="h3 issue-title-link">{{ r.title }}</a>
+                <span class="labels">
+                    {% for l in r.label %}
+                        <span style="background-color: #{{ l.color }};">{{ l }}</span>
+                    {% endfor %}
+                </span>
+                <div class="issue-meta" style="color: #aaa">
+                    #{{ r.id }} opened on {{ r.time|date:"Y/m/d H:i:s" }} by <u>user</u>
+                </div>
+            </div>
+        </div>
+    </div>
+    <hr>
+    {% endfor %}
+
 {% endblock %}

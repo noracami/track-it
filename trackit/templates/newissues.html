@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block hey %}
+    <div class="row">
+        <div class="col-md-8">
+            <h2>{{ issue_get.title }} <span style="color:#aaa">#{{ issue_get.id }}</span></h2>
+        </div>
+    </div>
+    <div style="float: left;">
+        <h4><span class="label label-success"><span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span> Open</span></h4>
+    </div>
+    <div><h4></h4>&nbsp;&nbsp;<a href="">noracami</a> opened this issue 3 days ago · 0 comments</div>
+    <div class="row"></div>
+    <hr>
+{% endblock %}
