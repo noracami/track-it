@@ -46,7 +46,7 @@
                     <p class="navbar-text">Not signed yet.</p>
                     {% endif %}
                     <a href="/issues/new" type="button" class="btn btn-success navbar-btn navbar-right">New issue</a>
-                    <button type="button" class="btn btn-default navbar-btn navbar-right">New user</button>
+                    <a href="/users" type="button" class="btn btn-warning navbar-btn navbar-right">Manage users</a>
                     <button type="button" class="btn btn-default navbar-btn navbar-right">New label</button>
                     {% if request.session.login %}
                     <a href="/logout" type="button" class="btn btn-danger navbar-btn navbar-right">Log out!</a>
@@ -73,5 +73,7 @@
         <!-- Include all compiled plugins (below), or include individual files as needed -->
         <!-- Latest compiled and minified JavaScript -->
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+        {% block customjs %}
+        {% endblock %}
     </body>
 </html>

@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block hey %}
+    <div class="row-issue-list">
+        <a href="/users/new" type="button" class="btn btn-success">New user</a>
+    </div>
+    <hr>
+    {% for d in detail %}
+    <div class="row-issue-list">
+        <div class="row-message">
+            <div class="media">
+                <div class="media-left media-top">
+                    <img class="media-object" src="http://placehold.it/180x180" alt="">
+                </div>
+                <div class="media-body media-top">
+                    <form name="form_edituser" action="{% url 'add' %}" method="POST">
+                        {% csrf_token %}
+                        <input type="hidden" name="todo" value="edituser">
+                        <input type="hidden" name="user_id" value="{{ d.id }}">
+                        <div class="h3">
+                            <label for="account01">登入帳號</label>
+                            <input class="form-control" name="account" id="account01" type="text" value="{{ d.account }}">
+                        </div>
+                        <div class="h3">
+                            <label for="name01">姓名</label>
+                            <input class="form-control" name="name" id="name01" type="text" value="{{ d.name }}">
+                        </div>
+                        <div class="h3">
+                            <label for="nickname01">暱稱</label>
+                            <input class="form-control" name="nickname" id="nickname01" type="text" value="{{ d.nickname }}">
+                        </div>
+                        <div class="h3">
+                            <label for="member01">身分</label>
+                            <input class="form-control" name="member" id="member01" type="text" value="{{ d.member }}">
+                        </div>
+                        <div class="h3">
+                            <label for="password01">新密碼</label>
+                            <input class="form-control" name="password" id="password01" type="password">
+                        </div>
+                        <button type="submit" class="btn btn-success pull-right" onclick="">
+                            <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> 送出
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+    {% for r in readit %}
+    <div class="row-issue-list">
+        <div class="row-message">
+            <div class="media">
+                <div class="media-left media-top">
+                    <a href="/users/{{ r.id }}">
+                        <img class="media-object" src="http://placehold.it/60x60" alt="">
+                    </a>
+                </div>
+                <div class="media-body media-middle">
+                    <strong>{{ r.name }}</strong>&nbsp;(@<a href="/users/{{ r.id }}">{{ r.account }}</a>)&nbsp;<span class="badge">{{ r.member }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <hr>
+    {% endfor %}
+{% endblock %}

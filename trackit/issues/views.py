@@ -34,9 +34,28 @@ def newissues(request):
         name = "default"
     return render(request, 'newissues.html', {"issue_get": name, "request": request})
 
+def newusers(request):
+    return render(request, 'newusers.html', {"request": request})
+
 def add(request):
     if request.method == 'POST':
         if 'login' in request.session:
+            if request.POST['todo'] == "newuser":
+                account = request.POST['account']
+                name = request.POST['name']
+                plain = request.POST['password']
+                password = hashlib.sha224(plain.encode()).hexdigest()
+                user = User(account=account, name=name, password=password)
+                user.save()
+                member = request.POST['member']
+                if member:
+                    user.member = member
+                    user.save()
+                nickname = request.POST['nickname']
+                if nickname != "" and nickname != "User":
+                    user.nickname = nickname
+                    user.save()
+
             if request.POST['todo'] == "newissue":
                 title = request.POST['title']
                 content = request.POST['comment']
@@ -46,6 +65,46 @@ def add(request):
                 comment = Comment(ticket=ticket, content=content, user=user)
                 comment.save()
     return redirect('home')
+
+def edit(request):
+    if request.method == 'POST':
+        if 'login' in request.session:
+            if request.POST['todo'] == "edituser":
+                user = get_object_or_404(User, id=request.POST['user_id'])
+                user.account = request.POST['account']
+                user.name = request.POST['name']
+                user.nickname = request.POST['nickname']
+                user.member = request.POST['member']
+                plain = request.POST['password']
+                user.password = hashlib.sha224(plain.encode()).hexdigest()
+                user.save()
+    return redirect('home')
+
+def users(request, user_id=0):
+    if user_id:
+        users = get_object_or_404(User, id=user_id)
+        u = users
+        detail = []
+        user_get = {}
+        user_get['id'] = u.id
+        user_get['account'] = u.account
+        user_get['name'] = u.name
+        user_get['nickname'] = u.nickname
+        user_get['member'] = u.member
+        detail.append(user_get)
+        return render(request, 'users.html', {"request": request, "detail": detail})
+    else:
+        users = User.objects.filter().order_by('-id')
+        readit = []
+        for u in users:
+            user_get = {}
+            user_get['id'] = u.id
+            user_get['account'] = u.account
+            user_get['name'] = u.nickname if u.nickname else u.name
+            user_get['member'] = u.member
+            readit.append(user_get)
+            #pass
+        return render(request, 'users.html', {"request": request, "readit": readit})
 
 def loginhere(request):
 
