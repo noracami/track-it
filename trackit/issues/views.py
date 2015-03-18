@@ -25,7 +25,12 @@ def issues(request, ticket_id):
     issue_get['status'] = issue.status
     issue_get['time'] = issue.time
     issue_get['label'] = issue.label_set.all()
-    return render(request, 'issues.html', {"issue_get": issue_get, "request": request})
+    issue_get['comment'] = issue.Tickets.all()
+    opened_user = get_object_or_404(User, pk=issue.opened_user.pk)
+    opened_user_get = {}
+
+    return render(request, 'issues.html', {
+        "opened_user": opened_user, "issue_get": issue_get, "request": request})
 
 def newissues(request):
     if "login" in request.session:
@@ -62,9 +67,19 @@ def add(request):
                 opened_user = get_object_or_404(User, account=request.session['login'])
                 ticket = Ticket(ticket_title=title, opened_user=opened_user)
                 ticket.save()
-                user = get_object_or_404(User, id=1)
+                user = get_object_or_404(User, id=opened_user.id)
                 comment = Comment(ticket=ticket, content=content, user=user)
                 comment.save()
+
+            if request.POST['todo'] == "newcomment":
+                user = get_object_or_404(User, account=request.session['login'])
+                issue_id = request.POST['issue_id']
+                ticket = get_object_or_404(Ticket, id=issue_id)
+                content = request.POST['comment']
+                comment = Comment(user=user, ticket=ticket, content=content)
+                comment.save()
+                return redirect('issues', ticket_id=issue_id)
+
     return redirect('home')
 
 def edit(request):
