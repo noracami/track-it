@@ -13,6 +13,7 @@ def home(request):
         issue_get['status'] = i.status
         issue_get['time'] = i.time
         issue_get['label'] = i.label_set.all()
+        issue_get['howmanycomments'] = i.Tickets.all().count() - 1
         readit.append(issue_get)
         #pass
     return render(request, 'home.html', {"readit": readit, "request": request})
@@ -25,6 +26,7 @@ def issues(request, ticket_id):
     issue_get['status'] = issue.status
     issue_get['time'] = issue.time
     issue_get['label'] = issue.label_set.all()
+    issue_get['howmanycomments'] = issue.Tickets.all().count()
     issue_get['comment'] = issue.Tickets.all()
     opened_user = get_object_or_404(User, pk=issue.opened_user.pk)
     opened_user_get = {}
@@ -145,6 +147,7 @@ def login(request):
                 user = get_object_or_404(User, account=request.POST['login_select'])
                 if password == user.password:
                     request.session['login'] = user.account
+                    request.session['member'] = user.member
                 else:
                     errmessage = "wrong password."
                     request.session['errmessage'] = errmessage
@@ -164,4 +167,5 @@ def login(request):
 def logout(request):
     if request.session['login']:
         del request.session['login']
+        del request.session['member']
     return redirect('home')

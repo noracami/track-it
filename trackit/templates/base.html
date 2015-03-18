@@ -36,21 +36,18 @@
             <nav class="navbar navbar-default">
                 <div class="container-fluid">
                     <div class="navbar-header">
-                        <a class="navbar-brand" href="#">
+                        <a class="navbar-brand" href="/">
                             Brand
                         </a>
                     </div>
                     {% if request.session.login %}
                     <p class="navbar-text">Signed in as {{ request.session.login }}</p>
-                    {% else %}
-                    <p class="navbar-text">Not signed yet.</p>
-                    {% endif %}
                     <a href="/issues/new" type="button" class="btn btn-success navbar-btn navbar-right">New issue</a>
                     <a href="/users" type="button" class="btn btn-warning navbar-btn navbar-right">Manage users</a>
-                    <button type="button" class="btn btn-default navbar-btn navbar-right">New label</button>
-                    {% if request.session.login %}
                     <a href="/logout" type="button" class="btn btn-danger navbar-btn navbar-right">Log out!</a>
                     {% else %}
+                    {# plz login first #}
+                    <p class="navbar-text">Not signed yet.</p>
                     <a href="/loginhere" type="button" class="btn btn-info navbar-btn navbar-right">Log in Here!</a>
                     {% endif %}
                 </div>

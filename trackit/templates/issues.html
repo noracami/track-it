@@ -17,7 +17,7 @@
         <h4><span class="label label-success"><span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span> Open</span></h4>
     </div>
     {% endif %}
-    <div><h4></h4>&nbsp;&nbsp;<a href="/users/{{ opened_user.account.id }}">{{ opened_user.account }}</a> opened this issue on {{ issue_get.time|date:"Y/m/d H:i:s" }} · 0 comments</div>
+    <div><h4></h4>&nbsp;&nbsp;<a href="/users/{{ opened_user.id }}">{{ opened_user.account }}</a> opened this issue on {{ issue_get.time|date:"Y/m/d H:i:s" }} · {{ issue_get.howmanycomments }} comments</div>
     <div class="row"></div>
     <hr>
     <div class="comment-wraper">

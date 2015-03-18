@@ -1,22 +1,5 @@
 {% extends "base.html" %}
 {% block hey %}
-    <div class="row-issue-list">
-        <div class="media">
-            <div class="media-left media-top">
-                <a href="#">
-                    <img class="media-object" src="http://placehold.it/36x36" alt="...">
-                </a>
-            </div>
-            <div class="media-body">
-                <span class="h3 issue-title-link">Issue Name</span>
-                <span class="labels">123</span>
-                <div class="issue-meta">
-                    #25 opened <time datetime="2015-03-17T10:37:18Z" is="relative-time" title="2014年3月31日 下午6:37 GMT+8">on 31 Mar 2014</time> by ipaaa 
-                </div>
-            </div>
-        </div>
-    </div>
-    <hr>
     {% for r in readit %}
     <div class="row-issue-list">
         <div class="media">
@@ -35,6 +18,9 @@
                 <div class="issue-meta" style="color: #aaa">
                     #{{ r.id }} opened on {{ r.time|date:"Y/m/d H:i:s" }} by <u>user</u>
                 </div>
+            </div>
+            <div class="media-right media-middle">
+                <span class="badge"><span class="glyphicon glyphicon-comment" aria-hidden="true"></span> {{ r.howmanycomments }}</span>
             </div>
         </div>
     </div>
