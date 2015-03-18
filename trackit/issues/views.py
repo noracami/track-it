@@ -36,7 +36,7 @@ def newissues(request):
 
 def add(request):
     if request.method == 'POST':
-        if request.session['login']:
+        if 'login' in request.session:
             if request.POST['todo'] == "newissue":
                 title = request.POST['title']
                 content = request.POST['comment']
