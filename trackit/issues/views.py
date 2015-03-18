@@ -47,19 +47,20 @@ def add(request):
                 password = hashlib.sha224(plain.encode()).hexdigest()
                 user = User(account=account, name=name, password=password)
                 user.save()
-                member = request.POST['member']
-                if member:
-                    user.member = member
-                    user.save()
                 nickname = request.POST['nickname']
-                if nickname != "" and nickname != "User":
+                if nickname:
                     user.nickname = nickname
+                    user.save()
+                member = request.POST['member']
+                if member != "" and member != "User":
+                    user.member = member
                     user.save()
 
             if request.POST['todo'] == "newissue":
                 title = request.POST['title']
                 content = request.POST['comment']
-                ticket = Ticket(ticket_title=title)
+                opened_user = get_object_or_404(User, account=request.session['login'])
+                ticket = Ticket(ticket_title=title, opened_user=opened_user)
                 ticket.save()
                 user = get_object_or_404(User, id=1)
                 comment = Comment(ticket=ticket, content=content, user=user)
@@ -76,8 +77,10 @@ def edit(request):
                 user.nickname = request.POST['nickname']
                 user.member = request.POST['member']
                 plain = request.POST['password']
-                user.password = hashlib.sha224(plain.encode()).hexdigest()
+                if plain:
+                    user.password = hashlib.sha224(plain.encode()).hexdigest()
                 user.save()
+                return redirect('users')
     return redirect('home')
 
 def users(request, user_id=0):
@@ -107,17 +110,40 @@ def users(request, user_id=0):
         return render(request, 'users.html', {"request": request, "readit": readit})
 
 def loginhere(request):
-
-    return render(request, 'loginhere.html', {"issue_get": "", "request": request})
+    if 'errmessage' in request.session:
+        errmessage = request.session['errmessage']
+        del request.session['errmessage']
+        return render(request, 'loginhere.html', {
+            "request": request,
+            "errmessage": errmessage,
+        })
+    return render(request, 'loginhere.html', {"request": request})
 
 def login(request):
     #TODO rewrite please
+    errmessage = ""
     if request.method == 'POST':
-        if request.POST['login_password']:
-            plain = request.POST['login_password']
-            if hashlib.sha224(plain.encode()).hexdigest() == '71454996db126e238e278a202a7dbc49dda187ec4f8c9dfc95584900':
-                #login
-                request.session['login'] = request.POST['login_select']
+        if 'login_select' in request.POST and 'login_password' in request.POST:
+            if User.objects.filter(account=request.POST['login_select']).exists():
+                plain = request.POST['login_password']
+                password = hashlib.sha224(plain.encode()).hexdigest()
+                user = get_object_or_404(User, account=request.POST['login_select'])
+                if password == user.password:
+                    request.session['login'] = user.account
+                else:
+                    errmessage = "wrong password."
+                    request.session['errmessage'] = errmessage
+                    return redirect('errorinloginhere')
+            else:
+                errmessage = "account has not exist."
+                request.session['errmessage'] = errmessage
+                return redirect('errorinloginhere')
+        #would'n use
+        #if request.POST['login_password']:
+        #    plain = request.POST['login_password']
+        #    if hashlib.sha224(plain.encode()).hexdigest() == '71454996db126e238e278a202a7dbc49dda187ec4f8c9dfc95584900':
+        #        #login
+        #        request.session['login'] = request.POST['login_select']
     return redirect('home')
 
 def logout(request):
