@@ -97,7 +97,6 @@ def add(request):
                 comment = Comment(user=user, ticket=ticket, content=content)
                 comment.save()
             return redirect('issues', ticket_id=issue_id)
-
     return redirect('home')
 
 def edit(request):
@@ -115,6 +114,24 @@ def edit(request):
                 user.save()
                 return redirect('users')
     return redirect('home')
+
+def change_status(request):
+    if request.method == 'POST':
+        issue_id = request.POST['issue_id']
+        if request.POST['todo'] == "addlabels":
+            if 'login' in request.session:
+                user = get_object_or_404(User, account=request.session['login'])
+                ticket = get_object_or_404(Ticket, id=issue_id)
+                label = []
+                for l in request.POST.getlist('labels'):
+                    label += l
+                for label_id in label:
+                    ticketstatus = TicketStatus(category="addlabels", user=user.id, labels=label_id)
+                    ticketstatus.save()
+                    ticket.label_set.add(get_object_or_404(Label, id=label_id))
+                    ticket.save()
+        return redirect('issues', ticket_id=ticket.id)
+
 
 def users(request, user_id=0):
     if user_id:
