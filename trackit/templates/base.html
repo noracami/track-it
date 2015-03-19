@@ -41,14 +41,20 @@
                         </a>
                     </div>
                     {% if request.session.login %}
-                    <p class="navbar-text">Signed in as {{ request.session.login }}</p>
-                    <a href="/issues/new" type="button" class="btn btn-success navbar-btn navbar-right">New issue</a>
-                    <a href="/users" type="button" class="btn btn-warning navbar-btn navbar-right">Manage users</a>
-                    <a href="/logout" type="button" class="btn btn-danger navbar-btn navbar-right">Log out!</a>
+                    <!-- <p class="navbar-text">Signed in as {{ request.session.login }}</p> -->
+                    <p class="navbar-text">歡迎, {{ request.session.member }}(@{{ request.session.login }})</p>
+                    <!-- <a href="/issues/new" type="button" class="btn btn-success navbar-btn navbar-right">New issue</a> -->
+                    <a href="/issues/new" type="button" class="btn btn-success navbar-btn navbar-right">新增案件</a>
+                    <!-- <a href="/users" type="button" class="btn btn-warning navbar-btn navbar-right">Manage users</a> -->
+                    <a href="/users" type="button" class="btn btn-warning navbar-btn navbar-right">設定使用者</a>
+                    <!-- <a href="/logout" type="button" class="btn btn-danger navbar-btn navbar-right">Log out!</a> -->
+                    <a href="/logout" type="button" class="btn btn-danger navbar-btn navbar-right">登出</a>
                     {% else %}
                     {# plz login first #}
-                    <p class="navbar-text">Not signed yet.</p>
-                    <a href="/loginhere" type="button" class="btn btn-info navbar-btn navbar-right">Log in Here!</a>
+                    <!-- <p class="navbar-text">Not signed yet.</p> -->
+                    <p class="navbar-text">您還未登入</p>
+                    <!-- <a href="/loginhere" type="button" class="btn btn-info navbar-btn navbar-right">Log in Here!</a> -->
+                    <a href="/loginhere" type="button" class="btn btn-info navbar-btn">登入</a>
                     {% endif %}
                 </div>
             </nav>

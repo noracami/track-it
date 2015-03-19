@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load staticfiles %}
 {% block hey %}
     <div class="row-issue-list">
         <a href="/users/new" type="button" class="btn btn-success">New user</a>
@@ -9,7 +10,7 @@
         <div class="row-message">
             <div class="media">
                 <div class="media-left media-top">
-                    <img class="media-object" src="http://placehold.it/180x180" alt="">
+                    <img class="media-object" src="/static/img/user/man-128.png" alt="">
                 </div>
                 <div class="media-body media-top">
                     <form name="form_edituser" action="{% url 'edit' %}" method="POST">

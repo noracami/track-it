@@ -10,6 +10,7 @@ class User(models.Model):
     nickname = models.CharField("暱稱", max_length=40, blank=True)
     member = models.CharField("身分", max_length=20, default="User")
     password = models.CharField("密碼", max_length=56, default="71454996db126e238e278a202a7dbc49dda187ec4f8c9dfc95584900")
+    photo_path = models.URLField("大頭照", default="/static/img/user/supportmale-128.png")
     def __str__(self):
         return self.name
 
