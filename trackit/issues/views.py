@@ -30,8 +30,14 @@ def issues(request, ticket_id):
     issue_get['comment'] = issue.Tickets.all()
     opened_user = get_object_or_404(User, pk=issue.opened_user.pk)
     opened_user_get = {}
+    photo_path = ""
+    if 'photo_path' in request.session:
+        photo_path = request.session['photo_path']
+    else:
+        photo_path = "/static/img/user/supportfemale-128.png"
 
     return render(request, 'issues.html', {
+        "photo_path": photo_path,
         "opened_user": opened_user, "issue_get": issue_get, "request": request})
 
 def newissues(request):
@@ -46,8 +52,8 @@ def newusers(request):
 
 def add(request):
     if request.method == 'POST':
-        if 'login' in request.session:
-            if request.POST['todo'] == "newuser":
+        if request.POST['todo'] == "newuser":
+            if 'login' in request.session:
                 account = request.POST['account']
                 name = request.POST['name']
                 plain = request.POST['password']
@@ -62,8 +68,10 @@ def add(request):
                 if member != "" and member != "User":
                     user.member = member
                     user.save()
+            return redirect('users')
 
-            if request.POST['todo'] == "newissue":
+        if request.POST['todo'] == "newissue":
+            if 'login' in request.session:
                 title = request.POST['title']
                 content = request.POST['comment']
                 opened_user = get_object_or_404(User, account=request.session['login'])
@@ -72,15 +80,23 @@ def add(request):
                 user = get_object_or_404(User, id=opened_user.id)
                 comment = Comment(ticket=ticket, content=content, user=user)
                 comment.save()
+                return redirect('issues', ticket_id=ticket.id)
 
-            if request.POST['todo'] == "newcomment":
+        if request.POST['todo'] == "newcomment":
+            issue_id = request.POST['issue_id']
+            if 'guest' in request.POST:
+                user = get_object_or_404(User, id=5)
+                ticket = get_object_or_404(Ticket, id=issue_id)
+                content = "使用者: %s\n%s" % (request.POST['guestname'] ,request.POST['comment'])
+                comment = Comment(user=user, ticket=ticket, content=content)
+                comment.save()
+            if 'login' in request.session:
                 user = get_object_or_404(User, account=request.session['login'])
-                issue_id = request.POST['issue_id']
                 ticket = get_object_or_404(Ticket, id=issue_id)
                 content = request.POST['comment']
                 comment = Comment(user=user, ticket=ticket, content=content)
                 comment.save()
-                return redirect('issues', ticket_id=issue_id)
+            return redirect('issues', ticket_id=issue_id)
 
     return redirect('home')
 
@@ -111,6 +127,7 @@ def users(request, user_id=0):
         user_get['name'] = u.name
         user_get['nickname'] = u.nickname
         user_get['member'] = u.member
+        user_get['photo_path'] = u.photo_path
         detail.append(user_get)
         return render(request, 'users.html', {"request": request, "detail": detail})
     else:
@@ -122,6 +139,7 @@ def users(request, user_id=0):
             user_get['account'] = u.account
             user_get['name'] = u.nickname if u.nickname else u.name
             user_get['member'] = u.member
+            user_get['photo_path'] = u.photo_path
             readit.append(user_get)
             #pass
         return render(request, 'users.html', {"request": request, "readit": readit})
@@ -148,6 +166,7 @@ def login(request):
                 if password == user.password:
                     request.session['login'] = user.account
                     request.session['member'] = user.member
+                    request.session['photo_path'] = user.photo_path
                 else:
                     errmessage = "wrong password."
                     request.session['errmessage'] = errmessage
