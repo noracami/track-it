@@ -27,8 +27,53 @@ class Ticket(models.Model):
 class Label(models.Model):
     class Meta:
         verbose_name = "標籤(Label)"
+    RED = 'e11d21'
+    ORANGE = 'eb6420'
+    YELLOW = 'fbca04'
+    GREEN = '009800'
+    DARK_SEA_GREEN = '006b75'
+    BLUE = '207de5'
+    DARK_BLUE = '0052cc'
+    PURPLE = '5319e7'
+    LIGHT_RED = 'f7c6c7'
+    LIGHT_ORANGE = 'fad8c7'
+    LIGHT_YELLOW = 'fef2c0'
+    LIGHT_GREEN = 'bfe5bf'
+    LIGHT_DARK_SEA_GREEN = 'bfdadc'
+    LIGHT_BLUE = 'c7edf8'
+    LIGHT_DARK_BLUE = 'bfd4f2'
+    LIGHT_PURPLE = 'd4c5f9'
+    COLOR_CHOICES = (
+        ('MAIN', (
+            (RED, '紅色'),
+            (ORANGE, '橙色'),
+            (YELLOW, '黃色'),
+            (GREEN, '綠色'),
+            (DARK_SEA_GREEN, '暗綠色'),
+            (BLUE, '藍色'),
+            (DARK_BLUE, '暗藍色'),
+            (PURPLE, '紫色'),
+        )),
+        ('LIGHT', (
+            (LIGHT_RED, '紅色'),
+            (LIGHT_ORANGE, '橙色'),
+            (LIGHT_YELLOW, '黃色'),
+            (LIGHT_GREEN, '綠色'),
+            (LIGHT_DARK_SEA_GREEN, '暗綠色'),
+            (LIGHT_BLUE, '藍色'),
+            (LIGHT_DARK_BLUE, '暗藍色'),
+            (LIGHT_PURPLE, '紫色'),
+        )),
+    )
+    color = models.CharField("顏色", max_length=6, choices=COLOR_CHOICES, default=RED)
+    WHITE = 'ffffff'
+    BLACK = '000000'
+    FONTCOLOR_CHOICES = (
+        (WHITE, '白'),
+        (BLACK, '黑'),
+    )
+    fontcolor = models.CharField("字的顏色", max_length=6, choices=FONTCOLOR_CHOICES, default=WHITE)
     label_name = models.CharField("標籤名稱", max_length=20)
-    color = models.CharField("顏色", max_length=6)
     tickets = models.ManyToManyField(Ticket, blank=True)
     def __str__(self):
         return self.label_name
