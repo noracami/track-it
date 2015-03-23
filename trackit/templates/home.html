@@ -1,5 +1,11 @@
 {% extends "base.html" %}
 {% block hey %}
+<div class="home-sidebar-wraper">
+    <h3>Labels</h3>
+    <hr>
+    {% for label in label_list %}<div>{{label}}</div>{% endfor %}
+</div>
+<div class="home-wraper">
     {% for r in readit %}
     <div class="row-issue-list">
         <div class="media">
@@ -26,5 +32,5 @@
     </div>
     <hr>
     {% endfor %}
-
+</div>
 {% endblock %}

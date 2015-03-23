@@ -22,7 +22,8 @@ def home(request):
         issue_get['howmanycomments'] = i.Tickets.all().count() - 1
         readit.append(issue_get)
         #pass
-    return render(request, 'home.html', {"readit": readit, "request": request})
+    label_list = Label.objects.all().order_by('-id')
+    return render(request, 'home.html', {"label_list": label_list, "readit": readit, "request": request})
 
 def issues(request, ticket_id):
     issue = get_object_or_404(Ticket, id=ticket_id)
