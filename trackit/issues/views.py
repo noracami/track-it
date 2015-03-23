@@ -6,6 +6,12 @@ import hashlib
 def home(request):
     issue = Ticket.objects.filter().order_by('-id')
     readit = []
+
+    if 'label' in request.GET:
+        if Label.objects.filter(pk=request.GET['label']).exists():
+            label = get_object_or_404(Label, pk=request.GET['label'])
+            issue = issue.filter(label=label)
+
     for i in issue:
         issue_get = {}
         issue_get['id'] = i.id

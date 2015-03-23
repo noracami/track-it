@@ -12,7 +12,7 @@
                 <a href="/issues/{{ r.id }}" class="h3 issue-title-link">{{ r.title }}</a>
                 <span class="labels">
                     {% for l in r.label %}
-                        <span style="border-radius: 5px; font-weight: bold; padding: 3px; background-color: #{{l.color}}; color: #{{l.fontcolor}};">{{ l }}</span>
+                        <a href="/?label={{l.id}}" class="btn" style="padding: 0;"><span style="border-radius: 5px; font-weight: bold; padding: 3px; background-color: #{{l.color}}; color: #{{l.fontcolor}};">{{ l }}</span></a>
                     {% endfor %}
                 </span>
                 <div class="issue-meta" style="color: #aaa">
