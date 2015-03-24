@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block hey %}
+<h3>request get</h3>
+{{request.GET}}
+<h3>request post</h3>
+{{request.POST}}
+<hr>
+{{label}}
+<hr>
+{{message|linebreaks}}
+{% endblock %}

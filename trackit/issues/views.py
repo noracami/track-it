@@ -1,5 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import Ticket, Label, User, Comment
+from django.db.models import Count
+from .models import Ticket, Label, User, Comment, TicketStatus
 import hashlib
 
 # Create your views here.
@@ -22,7 +23,7 @@ def home(request):
         issue_get['howmanycomments'] = i.Tickets.all().count() - 1
         readit.append(issue_get)
         #pass
-    label_list = Label.objects.all().order_by('-id')
+    label_list = Label.objects.annotate(num_tickets=Count('tickets')).filter(num_tickets__gte=1).order_by('id')
     return render(request, 'home.html', {"label_list": label_list, "readit": readit, "request": request})
 
 def issues(request, ticket_id):
@@ -35,6 +36,9 @@ def issues(request, ticket_id):
     issue_get['label'] = issue.label_set.all()
     issue_get['howmanycomments'] = issue.Tickets.all().count()
     issue_get['comment'] = issue.Tickets.all()
+    label_list = []
+    for i in Label.objects.all().order_by('id'):
+        label_list.append({'label': i, 'ischecked': (i in issue_get['label'])})
     opened_user = get_object_or_404(User, pk=issue.opened_user.pk)
     opened_user_get = {}
     photo_path = ""
@@ -44,6 +48,7 @@ def issues(request, ticket_id):
         photo_path = "/static/img/user/supportfemale-128.png"
 
     return render(request, 'issues.html', {
+        "label_list": label_list,
         "photo_path": photo_path,
         "opened_user": opened_user, "issue_get": issue_get, "request": request})
 
@@ -123,20 +128,55 @@ def edit(request):
     return redirect('home')
 
 def change_status(request):
+    message = ""
     if request.method == 'POST':
         issue_id = request.POST['issue_id']
-        if request.POST['todo'] == "addlabels":
+        if request.POST['todo'] == "editlabel":
             if 'login' in request.session:
                 user = get_object_or_404(User, account=request.session['login'])
                 ticket = get_object_or_404(Ticket, id=issue_id)
-                label = []
-                for l in request.POST.getlist('labels'):
-                    label += l
-                for label_id in label:
-                    ticketstatus = TicketStatus(category="addlabels", user=user.id, labels=label_id)
-                    ticketstatus.save()
-                    ticket.label_set.add(get_object_or_404(Label, id=label_id))
-                    ticket.save()
+                label_list = []
+                for i in Label.objects.all().order_by('id'):
+                    label_list.append({'label': i, 'ischecked': (i in ticket.label_set.all())})
+                label_choice = []
+                for l in request.POST.getlist('checkbox'):
+                    label_choice += [int(l)]
+                #return render(request, 'dev.html', locals())
+                message += "here\n"
+                for element in label_list:
+                    message += "go\n"
+                    if element['ischecked']:
+                        if element['label'].pk in label_choice:
+                            message += "1\n"
+                            pass
+                        else:
+                            #remove tag
+                            #
+                            #
+                            message += "2\n"
+                            ticketstatus = TicketStatus(
+                                category="removelabels", user=user.id, labels=element['label'])
+                            ticketstatus.save()
+                            ticket.label_set.remove(element['label'])
+                            ticket.save()
+                    else:
+                        if element['label'].pk in label_choice:
+                            message += "3\n"
+                            #add tag
+                            #
+                            #
+                            ticketstatus = TicketStatus(
+                                category="addlabels", user=user.id, labels=element['label'])
+                            ticketstatus.save()
+                            ticket.label_set.add(element['label'])
+                            ticket.save()
+                        else:
+                            message += "4. %s\n" % (element['label'].pk)
+                            message += "label_choice: %s\n" % label_choice
+                            message += "T or F: %s\n" % (element['label'].pk in label_choice)
+                            pass
+
+        return render(request, 'dev.html', locals())
         return redirect('issues', ticket_id=ticket.id)
 
 

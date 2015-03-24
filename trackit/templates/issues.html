@@ -50,21 +50,58 @@
             </div>
             {% endfor %}
         </div>
-        <div class="status-wraper" style="width:140px; left: 610px; position: absolute;">
+        <div class="status-wraper">
             <div class="row">
                 <div class="col-xs-12">
                     <div class="panel panel-default">
                         <div id="changeLabels" class="panel-heading container-fluid">
-                            <label class="panel-title pull-right"><span class="glyphicon glyphicon-cog" aria-hidden="true"></span></label>
+                            <label class="panel-title"><span class="glyphicon glyphicon-tags" aria-hidden="true"></span> 標籤</label>
                         </div>
                         <div id="mybody" class="panel-body">
-                            <div style="transition: all 1s linear;">123</div>
-                            <i id="labelMenu">No description provided.</i>
+                            {% for label in issue_get.label %}
+                            <div class="list-group" style="box-shadow: none;">
+                                <a href="/?label={{label.id}}" class="list-group-item" style="padding: 0; background-color: inherit; border: 0;">
+                                    <span style="border-radius: 5px; font-weight: bold; padding: 3px; background-color: #{{label.color}}; color: #{{label.fontcolor}};">{{ label }}</span>
+                                </a>
+                            </div>
+                            {% empty %}
+                            <i style="color: #999;">None yet.</i>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="panel panel-default">
+                        <div id="changeLabels" class="panel-heading container-fluid">
+                            <label class="panel-title"><span class="glyphicon glyphicon-cog" aria-hidden="true"></span> 設定標籤</label>
+                        </div>
+                        <div id="mybody" class="panel-body">
+                            {% if request.session.login %}
+                            <form name="form_editlabel" action="{% url 'change_status' %}" method="POST">
+                                {% csrf_token %}
+                                <input type="hidden" name="todo" value="editlabel">
+                                <input type="hidden" name="issue_id" value="{{ issue_get.id }}">
+                                {% for label in label_list %}
+                                <div class="list-group" style="box-shadow: none;">
+                                    <input {% if label.ischecked %}checked{% endif %} type="checkbox" name="checkbox" id="checkbox{{ label.label.id }}" value="{{ label.label.id }}">
+                                    <label for="checkbox{{ label.label.id }}"><span style="border-radius: 5px; font-weight: bold; padding: 3px; background-color: #{{label.label.color}}; color: #{{label.label.fontcolor}};">{{ label.label }}</span></label>
+                                </div>
+                                {% endfor %}
+                                <button id="submit02" type="submit" class="btn btn-success btn-sm pull-right">
+                                    <span class="glyphicon glyphicon-saved" aria-hidden="true"></span> 送出
+                                </button>
+                            </form>
+                            {% else %}
+                            <a href="/loginhere" type="button" class="btn btn-info navbar-btn">登入</a>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+        {# #}
         <div class="row"></div>
         <hr>
         <div class="comment-wraper">
@@ -132,9 +169,11 @@
     });
 </script>
 <script>
+    /*
     $("#changeLabels").toggle(function() {
         //if($("#mybody").)
         alert( "First handler for .toggle() called." );
     });
+*/
 </script>
 {% endblock %}

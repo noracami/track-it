@@ -1,20 +1,30 @@
 .comment-wraper {
-	width: 600px;
+	width: 75%;
+  min-width: 600px;
 }
 
 .home-wraper {
-  width: 80%;
+  position: relative;
+  float: left;
+  width: 75%;
 }
 
 .home-sidebar-wraper {
-  width: 20%;
-  position: relative;
-  float: right;
+  padding-left: 40px;
+  float: left;
 }
 
 .status-wraper {
   top: 0;
-  width: 200px;
+  width:170px;
+  left: 80%;
+  position: absolute;
+}
+
+@media (max-width: 1027px) {
+  .status-wraper {
+    left: 630px;
+  }
 }
 
 .row-message {
@@ -39,6 +49,10 @@
  *
  *
  */
+
+
+
+
 
 /*
 .btn-default .badge {
