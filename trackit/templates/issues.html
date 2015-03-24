@@ -2,7 +2,7 @@
 {% block hey %}
     <div class="row">
         <div class="col-md-10">
-            <h2>{{ issue_get.title }} <span style="color:#aaa">#{{ issue_get.id }}</span></h2>
+            <span class="h2">{{ issue_get.title }} <span style="color:#aaa">#{{ issue_get.id }}</span></span>
         </div>
     </div>
     {% if issue_get.status %}
@@ -17,29 +17,30 @@
         <h4><span class="label label-success"><span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span> Open</span></h4>
     </div>
     {% endif %}
-    <div><h4></h4>&nbsp;&nbsp;<a href="/users/{{ opened_user.id }}">{{ opened_user.account }}</a> opened this issue on {{ issue_get.time|date:"Y/m/d H:i:s" }} · {{ issue_get.howmanycomments }} comments</div>
+    <div><h4></h4>&nbsp;&nbsp;<a href="/users/{{ opened_user.id }}">{{ opened_user.account }}</a> 開啓了這個事件，於 {{ issue_get.time|date:"Y/m/d H:i:s" }} · {{ issue_get.howmanycomments }} comments</div>
     <div class="row"></div>
     <hr>
     <div style="position: relative;">
         {# #}
         <div class="comment-wraper">
-            {% for c in issue_get.comment %}
+            {% for c in comment_list %}
+            {% if c.comment %}
             <div class="row-message">
                 <div class="media">
                     <div class="media-left media-top">
-                        <a href="/users/{{ c.user.id }}">
-                            <img class="media-object" src="{{ c.user.photo_path }}" width="60" height="60" alt="">
+                        <a href="/users/{{ c.comment.user.id }}">
+                            <img class="media-object" src="{{ c.comment.user.photo_path }}" width="60" height="60" alt="">
                         </a>
                     </div>
                     <div class="media-body">
                         <div class="panel panel-default">
                             <div class="panel-heading container-fluid">
-                                <h3 class="panel-title" style="float: left;"><a href="/users/{{ c.user.id }}">{{ c.user.name }} (@{{ c.user.account }})</a> commented on {{ c.time|date:"Y/m/d H:i:s" }}</h3>
-                                <span class="pull-right badge">{{ c.user.member }}</span>
+                                <h3 class="panel-title" style="float: left;"><a href="/users/{{ c.comment.user.id }}">{{ c.comment.user.name }} (@{{ c.comment.user.account }})</a> 於 {{ c.time|date:"Y/m/d H:i:s" }}</h3>
+                                <span class="pull-right badge">{{ c.comment.user.member }}</span>
                             </div>
                             <div class="panel-body">
-                                {% if c.content %}
-                                {{c.content|linebreaks}}
+                                {% if c.comment.content %}
+                                {{c.comment.content|linebreaks}}
                                 {% else %}
                                 <i>No description provided.</i>
                                 {% endif %}
@@ -48,6 +49,54 @@
                     </div>
                 </div>
             </div>
+            {% elif c.status %}
+            <div class="row-message row-status">
+                <div class="media">
+                    <div class="media-left media-top">
+                        <a href="#">
+                            <img class="media-object" src="http://placehold.it/36x36" alt="...">
+                        </a>
+                    </div>
+                    <div class="media-body media-middle">
+                        <div class="media">
+                            <div class="media-left media-middle">
+                                <a href="">
+                                    <img class="media-object" src="{{ c.status.maker.photo_path }}" width="24" height="24" alt="">
+                                </a>
+                            </div>
+                            <div class="media-body">
+                                <a href=""><strong>{{ c.status.maker.name }}</strong></a> {{c.action.0}} <span class="btn btn-info btn-xs">執法與宣導</span> {{c.action.1}} 於 {{ c.time|date:"Y/m/d H:i:s" }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row-status">
+                <div class="media">
+                    <div class="media-left media-middle">
+                        <a href="/users/{{ c.comment.user.id }}">
+                            <img class="media-object" src="{{ c.comment.user.photo_path }}" width="60" height="60" alt="">
+                        </a>
+                    </div>
+                    <div class="media-body">
+                        <div class="panel panel-default">
+                            <div class="panel-heading container-fluid">
+                                <h3 class="panel-title" style="float: left;"><a href="/users/{{ c.comment.user.id }}">{{ c.comment.user.name }} (@{{ c.comment.user.account }})</a> commented on {{ c.time|date:"Y/m/d H:i:s" }}</h3>
+                                <span class="pull-right badge">{{ c.comment.user.member }}</span>
+                            </div>
+                            <div class="panel-body">
+                                {% if c.comment.content %}
+                                {{c.comment.content|linebreaks}}
+                                {% else %}
+                                <i>No description provided.</i>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            {% endif %}
             {% endfor %}
         </div>
         <div class="status-wraper">

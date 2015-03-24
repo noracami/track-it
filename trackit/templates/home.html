@@ -6,7 +6,11 @@
         <div class="media">
             <div class="media-left media-top">
                 <a href="/issues/{{ r.id }}">
+                    {% if r.status %}
+                    <img class="media-object" src="/static/img/task/flat_icons-sign-check-128.png" width="36" height="36" alt="">
+                    {% else %}
                     <img class="media-object" src="/static/img/task/flat_icons-graficheria.it-128.png" width="36" height="36" alt="">
+                    {% endif %}
                 </a>
             </div>
             <div class="media-body">

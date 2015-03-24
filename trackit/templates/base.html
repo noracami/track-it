@@ -29,10 +29,6 @@
     </head>
     <body style="background-color: #f5f5f5;">
         <div style="padding-left: 160px; padding-right: 50px; max-width: 1200px; min-width: 700px;">
-            <div>
-                <a href="/" class="h1">Hello</a>
-            </div>
-            <hr>
             <nav class="navbar navbar-default">
                 <div class="container-fluid">
                     <div class="navbar-header">
@@ -43,8 +39,8 @@
                     {% if request.session.login %}
                     <!-- <p class="navbar-text">Signed in as {{ request.session.login }}</p> -->
                     <p class="navbar-text">歡迎, {{ request.session.member }}(@{{ request.session.login }})</p>
-                    <!-- <a href="/issues/new" type="button" class="btn btn-success navbar-btn navbar-right">New issue</a> -->
                     <a href="/issues/new" type="button" class="btn btn-success navbar-btn navbar-right">新增案件</a>
+                    <a href="/tags/new" type="button" class="btn btn-primary navbar-btn navbar-right">新增標籤</a>
                     <!-- <a href="/users" type="button" class="btn btn-warning navbar-btn navbar-right">Manage users</a> -->
                     <a href="/users" type="button" class="btn btn-warning navbar-btn navbar-right">設定使用者</a>
                     <!-- <a href="/logout" type="button" class="btn btn-danger navbar-btn navbar-right">Log out!</a> -->

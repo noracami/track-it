@@ -5,7 +5,24 @@
 <h3>request post</h3>
 {{request.POST}}
 <hr>
-{{label}}
+{{a.0.0}}
 <hr>
+{{a.0.1}}
+<hr>
+{{a.0.1.0}}
+<hr>
+{{a.1}}
+<hr>
+{% for e in color_choices %}
+{{e.0}}
+<select class="form-control" name="" id="">
+{%for i in e.1 %}
+    <option value="{{i.0}}">
+        {{i.1}}
+    </option>
+{% endfor %}
+</select>
+<br>
+{% endfor %}
 {{message|linebreaks}}
 {% endblock %}

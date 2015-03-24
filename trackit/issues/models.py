@@ -21,6 +21,7 @@ class Ticket(models.Model):
     status = models.BooleanField("結案", default=False)
     time = models.DateTimeField("建立時間", auto_now_add=True)
     opened_user = models.ForeignKey(User, related_name="OpenedUser")
+    assignee = models.ManyToManyField(User, blank=True)
     def __str__(self):
         return "#%s %s" % (self.id, self.ticket_title)
 
@@ -90,11 +91,26 @@ class TicketStatus(models.Model):
     class Meta:
         verbose_name = "狀態(TicketStatus)"
     category = models.CharField("類別", max_length=30)
-    user = models.ForeignKey(User, related_name="userchangestatus")
+    maker = models.ForeignKey(User, related_name="userchangestatus")
     ticket = models.ForeignKey(Ticket, related_name="ticketofstatus")
     time = models.DateTimeField("建立時間", auto_now_add=True)
 
-class Addlabel(TicketStatus):
+class AddLabel(TicketStatus):
     class Meta:
-        verbose_name = "添加標籤(Addlabel)"
-    labels = models.CharField("標籤", max_length=30)
+        verbose_name = "添加標籤(AddLabel)"
+    labels = models.ForeignKey(Label, related_name="addtoticket")
+
+class RemoveLabel(TicketStatus):
+    class Meta:
+        verbose_name = "取消標籤(RemoveLabel)"
+    labels = models.ForeignKey(Label, related_name="removefromticket")
+
+class UserAssign(TicketStatus):
+    class Meta:
+        verbose_name = "人員指派(UserAssign)"
+    user = models.ForeignKey(User, related_name="userassigned")
+
+class UserUnassign(TicketStatus):
+    class Meta:
+        verbose_name = "取消人員指派(UserUnassign)"
+    user = models.ForeignKey(User, related_name="userunassigned")

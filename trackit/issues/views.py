@@ -1,6 +1,8 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.db.models import Count
-from .models import Ticket, Label, User, Comment, TicketStatus
+from .models import (Ticket, Label, User, Comment,
+                     TicketStatus,
+                     AddLabel, RemoveLabel, UserAssign, UserUnassign)
 import hashlib
 
 # Create your views here.
@@ -34,8 +36,8 @@ def issues(request, ticket_id):
     issue_get['status'] = issue.status
     issue_get['time'] = issue.time
     issue_get['label'] = issue.label_set.all()
-    issue_get['howmanycomments'] = issue.Tickets.all().count()
-    issue_get['comment'] = issue.Tickets.all()
+    issue_get['howmanycomments'] = issue.Tickets.all().count() - 1
+    #issue_get['comment'] = issue.Tickets.all()
     label_list = []
     for i in Label.objects.all().order_by('id'):
         label_list.append({'label': i, 'ischecked': (i in issue_get['label'])})
@@ -51,14 +53,27 @@ def issues(request, ticket_id):
     #
     #
     #sorted
-
-
-
+    comment_list = []
+    for c in issue.Tickets.all():
+        comment_get = {}
+        comment_get['comment'] = c
+        comment_get['time'] = c.time
+        comment_list.append(comment_get)
+    for d in issue.ticketofstatus.all():
+        comment_get = {}
+        comment_get['status'] = d
+        comment_get['time'] = d.time
+        action = {"addlabels": "新增了,標籤", "removelabels": "取消了,標籤"}
+        comment_get['action'] = action[d.category].split(",")
+        comment_list.append(comment_get)
+    comment_list = sorted(comment_list, key=lambda k: k['time'])
 
     return render(request, 'issues.html', {
         "label_list": label_list,
+        "comment_list": comment_list,
+        "issue_get": issue_get,
         "photo_path": photo_path,
-        "opened_user": opened_user, "issue_get": issue_get, "request": request})
+        "opened_user": opened_user, "request": request})
 
 def newissues(request):
     if "login" in request.session:
@@ -69,6 +84,11 @@ def newissues(request):
 
 def newusers(request):
     return render(request, 'newusers.html', {"request": request})
+
+def newlabels(request):
+    color_choices = Label.COLOR_CHOICES
+    fontcolor_choices = Label.FONTCOLOR_CHOICES
+    return render(request, 'newlabels.html', locals())
 
 def add(request):
     if request.method == 'POST':
@@ -117,6 +137,13 @@ def add(request):
                 comment = Comment(user=user, ticket=ticket, content=content)
                 comment.save()
             return redirect('issues', ticket_id=issue_id)
+
+        if request.POST['todo'] == "newlabel":
+            if 'login' in request.session:
+                color = request.POST['color']
+                fontcolor = request.POST['fontcolor']
+                label_name = request.POST['label_name']
+                Label.objects.create(color=color, fontcolor=fontcolor, label_name=label_name)
     return redirect('home')
 
 def edit(request):
@@ -162,8 +189,8 @@ def change_status(request):
                             #
                             #
                             message += "2\n"
-                            ticketstatus = TicketStatus(
-                                category="removelabels", user=user.id, labels=element['label'])
+                            ticketstatus = RemoveLabel(
+                                category="removelabels", maker=user, ticket=ticket, labels=element['label'])
                             ticketstatus.save()
                             ticket.label_set.remove(element['label'])
                             ticket.save()
@@ -173,8 +200,8 @@ def change_status(request):
                             #add tag
                             #
                             #
-                            ticketstatus = TicketStatus(
-                                category="addlabels", user=user.id, labels=element['label'])
+                            ticketstatus = AddLabel(
+                                category="addlabels", maker=user, ticket=ticket, labels=element['label'])
                             ticketstatus.save()
                             ticket.label_set.add(element['label'])
                             ticket.save()
