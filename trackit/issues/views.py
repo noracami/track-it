@@ -47,6 +47,14 @@ def issues(request, ticket_id):
     else:
         photo_path = "/static/img/user/supportfemale-128.png"
 
+    #
+    #
+    #
+    #sorted
+
+
+
+
     return render(request, 'issues.html', {
         "label_list": label_list,
         "photo_path": photo_path,
