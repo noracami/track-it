@@ -1,6 +1,6 @@
 from django.contrib import admin
 from issues.models import (
-    Ticket, Label, User, Comment, TicketStatus
+    Ticket, Label, User, Comment, TicketStatus, Addlabel,
     )
 
 
@@ -11,3 +11,4 @@ admin.site.register(Label)
 admin.site.register(User)
 admin.site.register(Comment)
 admin.site.register(TicketStatus)
+admin.site.register(Addlabel)

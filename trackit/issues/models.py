@@ -90,6 +90,11 @@ class TicketStatus(models.Model):
     class Meta:
         verbose_name = "狀態(TicketStatus)"
     category = models.CharField("類別", max_length=30)
-    user = models.CharField("使用者", max_length=30)
-    labels = models.CharField("標籤", max_length=30)
+    user = models.ForeignKey(User, related_name="userchangestatus")
+    ticket = models.ForeignKey(Ticket, related_name="ticketofstatus")
     time = models.DateTimeField("建立時間", auto_now_add=True)
+
+class Addlabel(TicketStatus):
+    class Meta:
+        verbose_name = "添加標籤(Addlabel)"
+    labels = models.CharField("標籤", max_length=30)
