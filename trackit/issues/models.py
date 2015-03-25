@@ -1,4 +1,5 @@
 from django.db import models
+from model_utils.managers import InheritanceManager
 
 # Create your models here.
 
@@ -87,6 +88,14 @@ class Comment(models.Model):
     content = models.CharField("留言內容", max_length=140, blank=True)
     time = models.DateTimeField("建立時間", auto_now_add=True)
 
+class GuestComment(models.Model):
+    class Meta:
+        verbose_name = "訪客留言(Comment)"
+    user = models.CharField("姓名", max_length=30)
+    ticket = models.ForeignKey(Ticket, related_name="commentofguest")
+    content = models.CharField("留言內容", max_length=140, blank=True)
+    time = models.DateTimeField("建立時間", auto_now_add=True)
+
 class TicketStatus(models.Model):
     class Meta:
         verbose_name = "狀態(TicketStatus)"
@@ -94,6 +103,7 @@ class TicketStatus(models.Model):
     maker = models.ForeignKey(User, related_name="userchangestatus")
     ticket = models.ForeignKey(Ticket, related_name="ticketofstatus")
     time = models.DateTimeField("建立時間", auto_now_add=True)
+    objects = InheritanceManager()
 
 class AddLabel(TicketStatus):
     class Meta:

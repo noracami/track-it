@@ -53,40 +53,37 @@
             <div class="row-message row-status">
                 <div class="media">
                     <div class="media-left media-top">
-                        <a href="#">
-                            <img class="media-object" src="http://placehold.it/36x36" alt="...">
-                        </a>
+                        <img class="media-object" src="{{c.icon}}" alt="...">
                     </div>
                     <div class="media-body media-middle">
                         <div class="media">
                             <div class="media-left media-middle">
-                                <a href="">
+                                <a href="/users/{{ c.status.maker.id }}">
                                     <img class="media-object" src="{{ c.status.maker.photo_path }}" width="24" height="24" alt="">
                                 </a>
                             </div>
                             <div class="media-body">
-                                <a href=""><strong>{{ c.status.maker.name }}</strong></a> {{c.action.0}} <span class="btn btn-info btn-xs">執法與宣導</span> {{c.action.1}} 於 {{ c.time|date:"Y/m/d H:i:s" }}
+                                <a href="/users/{{ c.status.maker.id }}"><strong>{{ c.status.maker.name }}</strong></a> {{c.action.0}} <a href="/?label={{c.status.labels.id}}" class="btn" style="padding: 0;"><span style="border-radius: 5px; font-weight: bold; padding: 3px; background-color: #{{c.status.labels.color}}; color: #{{c.status.labels.fontcolor}};">{{ c.status.labels }}</span></a> {{c.action.1}} 於 {{ c.time|date:"Y/m/d H:i:s" }}
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="row-status">
+            {% elif c.guestcomment %}
+            <div class="row-message">
                 <div class="media">
-                    <div class="media-left media-middle">
-                        <a href="/users/{{ c.comment.user.id }}">
-                            <img class="media-object" src="{{ c.comment.user.photo_path }}" width="60" height="60" alt="">
-                        </a>
+                    <div class="media-left media-top">
+                        <img class="media-object" src="/static/img/user/supportfemale-128.png" width="60" height="60" alt="">
                     </div>
                     <div class="media-body">
-                        <div class="panel panel-default">
+                        <div class="panel panel-info">
                             <div class="panel-heading container-fluid">
-                                <h3 class="panel-title" style="float: left;"><a href="/users/{{ c.comment.user.id }}">{{ c.comment.user.name }} (@{{ c.comment.user.account }})</a> commented on {{ c.time|date:"Y/m/d H:i:s" }}</h3>
-                                <span class="pull-right badge">{{ c.comment.user.member }}</span>
+                                <h3 class="panel-title" style="float: left;">{{ c.guestcomment.user }} 於 {{ c.time|date:"Y/m/d H:i:s" }}</h3>
+                                <span class="pull-right badge">guest</span>
                             </div>
                             <div class="panel-body">
-                                {% if c.comment.content %}
-                                {{c.comment.content|linebreaks}}
+                                {% if c.guestcomment.content %}
+                                {{c.guestcomment.content|linebreaks}}
                                 {% else %}
                                 <i>No description provided.</i>
                                 {% endif %}

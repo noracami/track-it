@@ -1,9 +1,14 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.db.models import Count
-from .models import (Ticket, Label, User, Comment,
+from .models import (Ticket, Label, User, Comment, GuestComment,
                      TicketStatus,
                      AddLabel, RemoveLabel, UserAssign, UserUnassign)
 import hashlib
+
+
+
+def countcomments(i):
+    return i.Tickets.all().count() + i.commentofguest.count() - 1
 
 # Create your views here.
 def home(request):
@@ -22,7 +27,7 @@ def home(request):
         issue_get['status'] = i.status
         issue_get['time'] = i.time
         issue_get['label'] = i.label_set.all()
-        issue_get['howmanycomments'] = i.Tickets.all().count() - 1
+        issue_get['howmanycomments'] = countcomments(i)
         readit.append(issue_get)
         #pass
     label_list = Label.objects.annotate(num_tickets=Count('tickets')).filter(num_tickets__gte=1).order_by('id')
@@ -36,7 +41,7 @@ def issues(request, ticket_id):
     issue_get['status'] = issue.status
     issue_get['time'] = issue.time
     issue_get['label'] = issue.label_set.all()
-    issue_get['howmanycomments'] = issue.Tickets.all().count() - 1
+    issue_get['howmanycomments'] = countcomments(issue)
     #issue_get['comment'] = issue.Tickets.all()
     label_list = []
     for i in Label.objects.all().order_by('id'):
@@ -59,12 +64,25 @@ def issues(request, ticket_id):
         comment_get['comment'] = c
         comment_get['time'] = c.time
         comment_list.append(comment_get)
-    for d in issue.ticketofstatus.all():
+    #
+    for g in issue.commentofguest.all():
+        comment_get = {}
+        comment_get['guestcomment'] = g
+        comment_get['time'] = g.time
+        comment_list.append(comment_get)
+    #
+    #from itertools import chain
+    for d in issue.ticketofstatus.all().select_subclasses():
         comment_get = {}
         comment_get['status'] = d
         comment_get['time'] = d.time
         action = {"addlabels": "新增了,標籤", "removelabels": "取消了,標籤"}
         comment_get['action'] = action[d.category].split(",")
+        icon = {
+            "addlabels": "/static/img/tags/handdrawn-icons-tag-add-32.png",
+            "removelabels": "/static/img/tags/handdrawn-icons-tag-deny-32.png",
+            }
+        comment_get['icon'] = icon[d.category]
         comment_list.append(comment_get)
     comment_list = sorted(comment_list, key=lambda k: k['time'])
 
@@ -125,10 +143,10 @@ def add(request):
         if request.POST['todo'] == "newcomment":
             issue_id = request.POST['issue_id']
             if 'guest' in request.POST:
-                user = get_object_or_404(User, id=5)
+                user = "訪客: %s" % request.POST['guestname']
                 ticket = get_object_or_404(Ticket, id=issue_id)
-                content = "使用者: %s\n%s" % (request.POST['guestname'] ,request.POST['comment'])
-                comment = Comment(user=user, ticket=ticket, content=content)
+                content = request.POST['comment']
+                comment = GuestComment(user=user, ticket=ticket, content=content)
                 comment.save()
             if 'login' in request.session:
                 user = get_object_or_404(User, account=request.session['login'])
