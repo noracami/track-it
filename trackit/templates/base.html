@@ -38,7 +38,7 @@
                     </div>
                     {% if request.session.login %}
                     <!-- <p class="navbar-text">Signed in as {{ request.session.login }}</p> -->
-                    <p class="navbar-text">歡迎, {{ request.session.member }}(@{{ request.session.login }})</p>
+                    <p class="navbar-text">歡迎, {{ request.session.name }}(@{{ request.session.login }})</p>
                     <a href="/issues/new" type="button" class="btn btn-success navbar-btn navbar-right">新增案件</a>
                     <a href="/tags/new" type="button" class="btn btn-primary navbar-btn navbar-right">新增標籤</a>
                     <!-- <a href="/users" type="button" class="btn btn-warning navbar-btn navbar-right">Manage users</a> -->

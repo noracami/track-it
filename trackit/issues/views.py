@@ -2,7 +2,8 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.db.models import Count
 from .models import (Ticket, Label, User, Comment, GuestComment,
                      TicketStatus,
-                     AddLabel, RemoveLabel, UserAssign, UserUnassign)
+                     AddLabel, RemoveLabel, UserAssign, UserUnassign,
+                     CloseIssue, ReopenIssue,)
 import hashlib
 
 
@@ -28,6 +29,7 @@ def home(request):
         issue_get['time'] = i.time
         issue_get['label'] = i.label_set.all()
         issue_get['howmanycomments'] = countcomments(i)
+        issue_get['opened_user'] = i.opened_user
         readit.append(issue_get)
         #pass
     label_list = Label.objects.annotate(num_tickets=Count('tickets')).filter(num_tickets__gte=1).order_by('id')
@@ -76,13 +78,27 @@ def issues(request, ticket_id):
         comment_get = {}
         comment_get['status'] = d
         comment_get['time'] = d.time
-        action = {"addlabels": "新增了,標籤", "removelabels": "取消了,標籤"}
+        action = {
+            "addlabels": "新增了,標籤",
+            "removelabels": "取消了,標籤",
+            "closeissue": "關閉了這個案件",
+            "reopenissue": "重啟了這個案件",
+            }
         comment_get['action'] = action[d.category].split(",")
         icon = {
             "addlabels": "/static/img/tags/handdrawn-icons-tag-add-32.png",
             "removelabels": "/static/img/tags/handdrawn-icons-tag-deny-32.png",
+            "closeissue": "/static/img/task/flat-icons-issue-closed-128.png",
+            "reopenissue": "/static/img/task/glyph-issue-reopened-128.png",
             }
         comment_get['icon'] = icon[d.category]
+        category = {
+            "addlabels": "label",
+            "removelabels": "label",
+            "closeissue": "issue",
+            "reopenissue": "issue",
+            }
+        comment_get['category'] = category[d.category]
         comment_list.append(comment_get)
     comment_list = sorted(comment_list, key=lambda k: k['time'])
 
@@ -184,6 +200,25 @@ def change_status(request):
     message = ""
     if request.method == 'POST':
         issue_id = request.POST['issue_id']
+
+        if request.POST['todo'] == "closeissue":
+            if 'login' in request.session:
+                user = get_object_or_404(User, account=request.session['login'])
+                ticket = get_object_or_404(Ticket, id=issue_id)
+                CloseIssue.objects.create(category="closeissue", maker=user, ticket=ticket)
+                ticket.status = True
+                ticket.save()
+
+        if request.POST['todo'] == "reopenissue":
+            if 'login' in request.session:
+                user = get_object_or_404(User, account=request.session['login'])
+                ticket = get_object_or_404(Ticket, id=issue_id)
+                ReopenIssue.objects.create(category="reopenissue", maker=user, ticket=ticket)
+                ticket.status = False
+                ticket.save()
+
+        return render(request, 'dev.html', locals())
+
         if request.POST['todo'] == "editlabel":
             if 'login' in request.session:
                 user = get_object_or_404(User, account=request.session['login'])
@@ -229,8 +264,8 @@ def change_status(request):
                             message += "T or F: %s\n" % (element['label'].pk in label_choice)
                             pass
 
-        return render(request, 'dev.html', locals())
         return redirect('issues', ticket_id=ticket.id)
+    return render(request, 'dev.html', locals())
 
 
 def users(request, user_id=0):
@@ -283,6 +318,7 @@ def login(request):
                 if password == user.password:
                     request.session['login'] = user.account
                     request.session['member'] = user.member
+                    request.session['name'] = user.name
                     request.session['photo_path'] = user.photo_path
                 else:
                     errmessage = "wrong password."
@@ -303,5 +339,8 @@ def login(request):
 def logout(request):
     if request.session['login']:
         del request.session['login']
+    if request.session['member']:
         del request.session['member']
+    if request.session['name']:
+        del request.session['name']
     return redirect('home')

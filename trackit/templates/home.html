@@ -21,7 +21,7 @@
                     {% endfor %}
                 </span>
                 <div class="issue-meta" style="color: #aaa">
-                    #{{ r.id }} opened on {{ r.time|date:"Y/m/d H:i:s" }} by <u>user</u>
+                    #{{ r.id }} opened on {{ r.time|date:"Y/m/d H:i:s" }} by <u>{{r.opened_user}}</u>
                 </div>
             </div>
             <div class="media-right media-middle">

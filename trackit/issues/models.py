@@ -124,3 +124,11 @@ class UserUnassign(TicketStatus):
     class Meta:
         verbose_name = "取消人員指派(UserUnassign)"
     user = models.ForeignKey(User, related_name="userunassigned")
+
+class CloseIssue(TicketStatus):
+    class Meta:
+        verbose_name = "結束案件"
+
+class ReopenIssue(TicketStatus):
+    class Meta:
+        verbose_name = "重啟案件"
