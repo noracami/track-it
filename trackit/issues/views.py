@@ -217,8 +217,6 @@ def change_status(request):
                 ticket.status = False
                 ticket.save()
 
-        return render(request, 'dev.html', locals())
-
         if request.POST['todo'] == "editlabel":
             if 'login' in request.session:
                 user = get_object_or_404(User, account=request.session['login'])
@@ -229,7 +227,6 @@ def change_status(request):
                 label_choice = []
                 for l in request.POST.getlist('checkbox'):
                     label_choice += [int(l)]
-                #return render(request, 'dev.html', locals())
                 message += "here\n"
                 for element in label_list:
                     message += "go\n"
