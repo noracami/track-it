@@ -21,6 +21,12 @@ def home(request):
             label = get_object_or_404(Label, pk=request.GET['label'])
             issue = issue.filter(label=label)
 
+    if 'open' in request.GET:
+        issue = issue.filter(status=False)
+
+    if 'closed' in request.GET:
+        issue = issue.filter(status=True)
+
     for i in issue:
         issue_get = {}
         issue_get['id'] = i.id

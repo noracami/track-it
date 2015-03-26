@@ -43,6 +43,30 @@
         </a>
     </div>
     {% endfor %}
+    
+    <div>
+        <a href="/" id="issue-all" class="btn-sm btn-default btn">全部</a>
+        <a href="/?open" id="issue-open" class="btn-sm btn-default btn">進行中</a>
+        <a href="/?closed" id="issue-closed" class="btn-sm btn-default btn">已結案</a>
+    </div>
 </div>
 <div class="row"></div>
+{% endblock %}
+{% block customjs %}
+    <script>
+        $(window).load(function (){
+            var mypath = $(location).attr('pathname') + $(location).attr('search');
+            if (mypath === '/'){
+                $("#issue-all").addClass("disabled");
+            }
+            else if (mypath === '/?open'){
+                $("#issue-open").addClass("disabled");
+            }
+            else if (mypath === '/?closed'){
+                $("#issue-closed").addClass("disabled");
+            }
+
+            // body...
+        });
+    </script>
 {% endblock %}
