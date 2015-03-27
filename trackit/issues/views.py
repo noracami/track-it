@@ -27,6 +27,13 @@ def home(request):
     if 'closed' in request.GET:
         issue = issue.filter(status=True)
 
+    if 'author' in request.GET:
+        author = request.GET['author']
+        if User.objects.filter(account=author).exists():
+            issue = issue.filter(opened_user=get_object_or_404(User, account=author))
+        else:
+            return redirect('home')
+
     for i in issue:
         issue_get = {}
         issue_get['id'] = i.id
