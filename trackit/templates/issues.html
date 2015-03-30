@@ -26,7 +26,7 @@
             {% for c in comment_list %}
             {% if c.comment %}
             <div class="row-message">
-                <div class="media">
+                <div class="media" id="event-{{forloop.counter}}">
                     <div class="media-left media-top">
                         <a href="/users/{{ c.comment.user.id }}">
                             <img class="media-object" src="{{ c.comment.user.photo_path }}" width="60" height="60" alt="">
@@ -35,7 +35,10 @@
                     <div class="media-body">
                         <div class="panel panel-default">
                             <div class="panel-heading container-fluid">
-                                <h3 class="panel-title" style="float: left;"><a href="/users/{{ c.comment.user.id }}">{{ c.comment.user.name }} (@{{ c.comment.user.account }})</a> 於 {{ c.time|date:"Y/m/d H:i:s" }}</h3>
+                                <h3 class="panel-title" style="float: left;"><!-- 
+                                 --><a href="/users/{{ c.comment.user.id }}">{{ c.comment.user.name }} (@{{ c.comment.user.account }})</a><!-- 
+                                 --> 於 <!-- 
+                                 --><a href="#event-{{forloop.counter}}">{{ c.time|date:"Y/m/d H:i:s" }}</a></h3>
                                 <span class="pull-right badge">{{ c.comment.user.member }}</span>
                             </div>
                             <div class="panel-body">
@@ -51,7 +54,7 @@
             </div>
             {% elif c.status %}
             <div class="row-message row-status">
-                <div class="media">
+                <div class="media" id="event-{{forloop.counter}}">
                     <div class="media-left media-top">
                         <img class="media-object" src="{{c.icon}}" width="32" alt="...">
                     </div>
@@ -64,9 +67,15 @@
                             </div>
                             <div class="media-body">
                                 {% if c.category == "issue" %}
-                                <a href="/users/{{ c.status.maker.id }}"><strong>{{ c.status.maker.name }}</strong></a> {{c.action.0}} 於 {{ c.time|date:"Y/m/d H:i:s" }}
+                                <a href="/users/{{ c.status.maker.id }}"><strong>{{ c.status.maker.name }}</strong></a><!-- 
+                                 --> {{c.action.0}} 於 <!-- 
+                                 --><a href="#event-{{forloop.counter}}" style="color: #999;">{{ c.time|date:"Y/m/d H:i:s" }}</a>
                                 {% elif c.category == "label" %}
-                                <a href="/users/{{ c.status.maker.id }}"><strong>{{ c.status.maker.name }}</strong></a> {{c.action.0}} <a href="/?label={{c.status.labels.id}}" class="btn" style="padding: 0;"><span style="border-radius: 5px; font-weight: bold; padding: 3px; background-color: #{{c.status.labels.color}}; color: #{{c.status.labels.fontcolor}};">{{ c.status.labels }}</span></a> {{c.action.1}} 於 {{ c.time|date:"Y/m/d H:i:s" }}
+                                <a href="/users/{{ c.status.maker.id }}"><strong>{{ c.status.maker.name }}</strong></a><!-- 
+                                 --> {{c.action.0}} <!-- 
+                                 --><a href="/?label={{c.status.labels.id}}" class="btn" style="padding: 0;"><span style="border-radius: 5px; font-weight: bold; padding: 3px; background-color: #{{c.status.labels.color}}; color: #{{c.status.labels.fontcolor}};">{{ c.status.labels }}</span></a><!-- 
+                                 --> {{c.action.1}} 於 <!-- 
+                                 --><a href="#event-{{forloop.counter}}" style="color: #999;">{{ c.time|date:"Y/m/d H:i:s" }}</a>
                                 {% endif %}
                             </div>
                         </div>
@@ -75,14 +84,15 @@
             </div>
             {% elif c.guestcomment %}
             <div class="row-message">
-                <div class="media">
+                <div class="media" id="event-{{forloop.counter}}">
                     <div class="media-left media-top">
                         <img class="media-object" src="/static/img/user/supportfemale-128.png" width="60" height="60" alt="">
                     </div>
                     <div class="media-body">
                         <div class="panel panel-info">
                             <div class="panel-heading container-fluid">
-                                <h3 class="panel-title" style="float: left;">{{ c.guestcomment.user }} 於 {{ c.time|date:"Y/m/d H:i:s" }}</h3>
+                                <h3 class="panel-title" style="float: left;">{{ c.guestcomment.user }} 於 <!-- 
+                                 --><a href="#event-{{forloop.counter}}" style="color: #999;">{{ c.time|date:"Y/m/d H:i:s" }}</a></h3>
                                 <span class="pull-right badge">guest</span>
                             </div>
                             <div class="panel-body">
