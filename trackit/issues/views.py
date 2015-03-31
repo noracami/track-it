@@ -57,6 +57,7 @@ def issues(request, ticket_id):
     issue_get['time'] = issue.time
     issue_get['label'] = issue.label_set.all()
     issue_get['howmanycomments'] = countcomments(issue)
+    issue_get['assignee'] = issue.assignee if issue.assignee.count() else False
     #issue_get['comment'] = issue.Tickets.all()
     label_list = []
     for i in Label.objects.all().order_by('id'):
@@ -73,6 +74,9 @@ def issues(request, ticket_id):
     #
     #
     #sorted
+
+    user_list = User.objects.all()
+
     comment_list = []
     for c in issue.Tickets.all():
         comment_get = {}
@@ -116,6 +120,7 @@ def issues(request, ticket_id):
     comment_list = sorted(comment_list, key=lambda k: k['time'])
 
     return render(request, 'issues.html', {
+        "user_list": user_list,
         "label_list": label_list,
         "comment_list": comment_list,
         "issue_get": issue_get,
@@ -213,6 +218,16 @@ def change_status(request):
     message = ""
     if request.method == 'POST':
         issue_id = request.POST['issue_id']
+
+        if request.POST['todo'] == "assign":
+            if 'login' in request.session:
+                user = get_object_or_404(User, account=request.session['login'])
+                ticket = get_object_or_404(Ticket, id=issue_id)
+                assignee = get_object_or_404(User, id=request.POST['assignee'])
+                UserAssign.objects.create(category="assign", maker=user, ticket=ticket, user=assignee)
+                ticket.assignee.add(assignee)
+                ticket.save()
+
 
         if request.POST['todo'] == "closeissue":
             if 'login' in request.session:

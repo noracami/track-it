@@ -111,6 +111,7 @@
             {% endfor %}
         </div>
         <div class="status-wraper">
+            {# label #}
             <div class="row">
                 <div class="col-xs-12">
                     <div class="panel panel-default">
@@ -131,6 +132,7 @@
                     </div>
                 </div>
             </div>
+            {# set label #}
             <div class="row">
                 <div class="col-xs-12">
                     <div class="panel panel-default">
@@ -150,6 +152,59 @@
                                 </div>
                                 {% endfor %}
                                 <button id="submit02" type="submit" class="btn btn-success btn-sm pull-right">
+                                    <span class="glyphicon glyphicon-saved" aria-hidden="true"></span> 送出
+                                </button>
+                            </form>
+                            {% else %}
+                            <a href="/loginhere" type="button" class="btn btn-info navbar-btn">登入</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {# assignee #}
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="panel panel-default">
+                        <div id="changeLabels" class="panel-heading container-fluid">
+                            <label class="panel-title"><span class="glyphicon glyphicon-tags" aria-hidden="true"></span> 承辦人</label>
+                        </div>
+                        <div id="mybody" class="panel-body">
+                            {% if issue_get.assignee %}
+                            <!-- 
+                                TODO: not done
+                             -->
+                            <a href="/users/{{ c.comment.user.id }}">{{ issue_get.assignee }} (@{{ c.comment.user.account }})</a>
+                            {% else %}
+                            <i style="color: #999;">None yet.</i>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {# assign people #}
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="panel panel-default">
+                        <div id="changeLabels" class="panel-heading container-fluid">
+                            <label class="panel-title"><span class="glyphicon glyphicon-cog" aria-hidden="true"></span> 設定承辦人</label>
+                        </div>
+                        <div id="mybody" class="panel-body">
+                            {% if request.session.login %}
+                            <form name="form_assign" action="{% url 'change_status' %}" method="POST">
+                                {% csrf_token %}
+                                <input type="hidden" name="todo" value="assign">
+                                <input type="hidden" name="issue_id" value="{{ issue_get.id }}">
+                                <div class="list-group" style="box-shadow: none;">
+                                    <select class="form-control" name="assignee" id="assignee01">
+                                    {% for user in user_list %}
+                                        <option value="{{user.id}}">
+                                            {{user}}
+                                        </option>
+                                    {% endfor %}
+                                    </select>
+                                </div>
+                                <button id="submit04" type="submit" class="btn btn-success btn-sm pull-right">
                                     <span class="glyphicon glyphicon-saved" aria-hidden="true"></span> 送出
                                 </button>
                             </form>
