@@ -57,7 +57,7 @@ def issues(request, ticket_id):
     issue_get['time'] = issue.time
     issue_get['label'] = issue.label_set.all()
     issue_get['howmanycomments'] = countcomments(issue)
-    issue_get['assignee'] = issue.assignee if issue.assignee.count() else False
+    issue_get['assignee'] = issue.assignee.all()
     #issue_get['comment'] = issue.Tickets.all()
     label_list = []
     for i in Label.objects.all().order_by('id'):
@@ -100,6 +100,7 @@ def issues(request, ticket_id):
             "removelabels": "取消了,標籤",
             "closeissue": "關閉了這個案件",
             "reopenissue": "重啟了這個案件",
+            "assign": "指派了, 這個案件",
             }
         comment_get['action'] = action[d.category].split(",")
         icon = {
@@ -107,6 +108,7 @@ def issues(request, ticket_id):
             "removelabels": "/static/img/tags/handdrawn-icons-tag-deny-32.png",
             "closeissue": "/static/img/task/flat-icons-issue-closed-128.png",
             "reopenissue": "/static/img/task/glyph-issue-reopened-128.png",
+            "assign": "/static/img/task/flat-icons-person-128.png",
             }
         comment_get['icon'] = icon[d.category]
         category = {
@@ -114,6 +116,7 @@ def issues(request, ticket_id):
             "removelabels": "label",
             "closeissue": "issue",
             "reopenissue": "issue",
+            "assign": "assign",
             }
         comment_get['category'] = category[d.category]
         comment_list.append(comment_get)

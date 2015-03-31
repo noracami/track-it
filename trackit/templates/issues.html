@@ -56,7 +56,7 @@
             <div class="row-message row-status">
                 <div class="media" id="event-{{forloop.counter}}">
                     <div class="media-left media-top">
-                        <img class="media-object" src="{{c.icon}}" width="32" alt="...">
+                        <img class="media-object" src="{{c.icon}}" width="32" height="" alt="...">
                     </div>
                     <div class="media-body media-middle">
                         <div class="media">
@@ -76,6 +76,12 @@
                                  --><a href="/?label={{c.status.labels.id}}" class="btn" style="padding: 0;"><span style="border-radius: 5px; font-weight: bold; padding: 3px; background-color: #{{c.status.labels.color}}; color: #{{c.status.labels.fontcolor}};">{{ c.status.labels }}</span></a><!-- 
                                  --> {{c.action.1}} 於 <!-- 
                                  --><a href="#event-{{forloop.counter}}" style="color: #999;">{{ c.time|date:"Y/m/d H:i:s" }}</a>
+                                {% elif c.category == "assign" %}
+                                <a href="/users/{{ c.status.maker.id }}"><strong>{{ c.status.maker.name }}</strong></a><!-- 
+                                 --> {{c.action.0}} <!-- 
+                                 --><a href="/users/{{ c.status.user.id }}"><strong>{{ c.status.user.name }}</strong></a><!-- 
+                                 --> {{c.action.1}} 於 <!--
+                                 --> <a href="#event-{{forloop.counter}}" style="color: #999;">{{ c.time|date:"Y/m/d H:i:s" }}</a>
                                 {% endif %}
                             </div>
                         </div>
@@ -170,14 +176,11 @@
                             <label class="panel-title"><span class="glyphicon glyphicon-tags" aria-hidden="true"></span> 承辦人</label>
                         </div>
                         <div id="mybody" class="panel-body">
-                            {% if issue_get.assignee %}
-                            <!-- 
-                                TODO: not done
-                             -->
-                            <a href="/users/{{ c.comment.user.id }}">{{ issue_get.assignee }} (@{{ c.comment.user.account }})</a>
-                            {% else %}
+                            {% for a in issue_get.assignee %}
+                            <a href="/users/{{ a.id }}">{{ a }} (@{{ a.account }})</a><br>
+                            {% empty %}
                             <i style="color: #999;">None yet.</i>
-                            {% endif %}
+                            {% endfor %}
                         </div>
                     </div>
                 </div>
